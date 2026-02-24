@@ -1,1 +1,399 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر عبايات مراسيم العرب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style> 
+        body { font-family: 'Tajawal', sans-serif; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; position: relative; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-x { position: absolute; top: 10px; left: 15px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1; }
+        .category-title { border-right: 4px solid #D35400; padding-right: 10px; margin: 25px 0 15px 0; font-weight: bold; color: #374151; }
+        .btn-fixed { min-width: 75px; padding: 6px 8px; display: flex; flex-direction: column; align-items: center; border-radius: 10px; transition: 0.2s; }
+        .btn-fixed span { font-size: 0.65rem; font-weight: normal; }
+        .product-img { width: 4rem; height: 4rem; border-radius: 0.5rem; object-fit: cover; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); flex-shrink: 0; }
+
+        .cart-float-btn { position: fixed; bottom: 180px; left: 20px; background: #D35400; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; }
+        .cart-badge { position: absolute; top: 0; right: 0; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; }
+
+        #cartDrawer { display: none; position: fixed; bottom: 100px; left: 20px; right: 20px; background: white; z-index: 1001; border-radius: 20px; box-shadow: 0 -5px 25px rgba(0,0,0,0.2); max-height: 60vh; overflow-y: auto; padding: 20px; border: 1px solid #eee; }
+        .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .qty-btn { background: #eee; width: 25px; height: 25px; border-radius: 5px; font-weight: bold; }
+
+        #cartDrawer {
+            position: fixed;
+            bottom: 110px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            z-index: 1001;
+            border-radius: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+            height: 60vh; 
+            display: none; 
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #cartItemsList {
+            flex: 1;
+            overflow-y: scroll;
+            padding: 10px;
+            background: #fff;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cart-footer-fixed {
+            padding: 15px;
+            background: #ffffff;
+            border-top: 2px solid #f5f5f5;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 pb-60">
+
+    <div id="successModal" class="modal">
+        <div class="modal-content shadow-2xl">
+            <span onclick="closeModal()" class="close-x">×</span>
+            <div class="text-green-500 text-6xl mb-4">✅</div>
+            <h2 class="text-xl font-bold mb-2 text-gray-800">تم استلام طلبك!</h2>
+            <p id="modalMsg" class="text-gray-600 mb-6"></p>
+            <button onclick="closeModal()" class="bg-orange-600 text-white px-12 py-2 rounded-lg font-bold">موافق</button>
+        </div>
+    </div>
+
+    <header class="bg-orange-700 text-white p-0.5 sticky top-0 z-50 flex items-center gap-4">
+        <div class="flex-shrink-0">
+            <img src="./logo.png" onerror="this.src='https://via.placeholder.com/200?text=متجر+عبايات'" alt="Logo" class="h-40 w-auto object-contain">
+        </div>
+        <div class="py-2">
+            <h1 class="text-3xl font-bold leading-tight">متجر عبايات مراسيم العرب</h1>
+            <p class="text-sm opacity-95">أناقة عصرية وجودة عالية</p>
+            <div class="inline-block bg-white/20 text-[10px] px-2 py-0.5 rounded-full mt-1">
+                📍 الدفع عند الاستلام
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 max-w-md mx-auto">
+
+        <h2 class="category-title">عبايات سوداء كلاسيك</h2>
+        <div class="grid gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_سوداء_١.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية سوداء فاخرة</h3>
+                        <p class="text-orange-600 text-sm">250 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">S/M/L/XL</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية سوداء فاخرة', 250, 'black-luxury')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_سوداء_٢.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية سوداء مطرزة</h3>
+                        <p class="text-orange-600 text-sm">300 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">S/M/L/XL</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية سوداء مطرزة', 300, 'black-embroidered')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_سوداء_٣.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية سوداء بسيطة</h3>
+                        <p class="text-orange-600 text-sm">200 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">S/M/L/XL</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية سوداء بسيطة', 200, 'black-simple')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+        </div>
+
+        <h2 class="category-title">عبايات ملونة</h2>
+        <div class="grid gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_بيج.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية بيج فاخرة</h3>
+                        <p class="text-orange-600 text-sm">280 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">S/M/L/XL</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية بيج فاخرة', 280, 'beige-luxury')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_رمادي.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية رمادي عصرية</h3>
+                        <p class="text-orange-600 text-sm">270 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">S/M/L/XL</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية رمادي عصرية', 270, 'gray-modern')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_بني.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية بني كلاسيك</h3>
+                        <p class="text-orange-600 text-sm">260 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">S/M/L/XL</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية بني كلاسيك', 260, 'brown-classic')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+        </div>
+
+        <h2 class="category-title">عبايات الأطفال</h2>
+        <div class="grid gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/عباية_أطفال.png" onerror="this.src='https://via.placeholder.com/100?text=عباية'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">عباية أطفال سوداء</h3>
+                        <p class="text-orange-600 text-sm">120 ريال</p>
+                        <p class="text-gray-400 text-xs mt-1">6-8 سنوات / 8-10 سنوات</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('عباية أطفال سوداء', 120, 'kids-black')" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+        </div>
+
+        <h2 class="category-title">إكسسوارات</h2>
+        <div class="grid gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/حجاب.png" onerror="this.src='https://via.placeholder.com/100?text=حجاب'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">حجاب فاخر</h3>
+                        <p class="text-orange-600 text-sm">80 ريال</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('حجاب فاخر', 80)" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="صور/اكسسوارات.png" onerror="this.src='https://via.placeholder.com/100?text=إكسسوار'" class="product-img">
+                    <div>
+                        <h3 class="font-bold">إكسسوارات (عقد + أساور)</h3>
+                        <p class="text-orange-600 text-sm">50 ريال</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('إكسسوارات (عقد + أساور)', 50)" class="btn-fixed bg-orange-600 text-white font-bold">إضافة +</button>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 mb-8 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <p class="text-gray-500 font-bold mb-4 italic">تواصلوا معنا مباشرة</p>
+            <div class="flex justify-center gap-8">
+                <a href="https://wa.me/966536560250" class="text-3xl text-green-500"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://snapchat.com/t/sJYTk1Su" class="text-3xl text-yellow-400" style="filter: drop-shadow(0 0 1px black);"><i class="fab fa-snapchat"></i></a>
+                <a href="https://www.tiktok.com/@marasimalearab1" class="text-3xl text-black"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.instagram.com/marasim_alearab" class="text-3xl text-pink-600"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="cart-float-btn" onclick="toggleCartDrawer()">
+        <i class="fas fa-shopping-bag text-2xl"></i>
+        <span id="cartCount" class="cart-badge">0</span>
+    </div>
+
+    <div id="cartDrawer" class="max-w-md mx-auto" style="display: none;">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h3 class="font-bold text-lg text-gray-800">سلة المشتريات</h3>
+            <button onclick="toggleCartDrawer()" class="text-3xl text-gray-400">&times;</button>
+        </div>
+
+        <div id="cartItemsList"></div>
+
+        <div class="cart-footer-fixed">
+            <div class="flex justify-between items-center mb-3">
+                <span class="font-bold text-gray-600">الإجمالي:</span>
+                <span class="text-orange-600 font-bold text-xl"><span id="inner-total">0</span> ريال</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-2xl max-w-md mx-auto rounded-t-3xl border-t z-50">
+        <div class="flex justify-between items-center mb-4">
+            <span class="font-bold text-gray-700">المجموع:</span>
+            <span class="text-orange-600 text-2xl font-bold"><span id="total-price">0</span> ريال</span>
+        </div>
+        <button id="send-btn" onclick="sendOrder()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg active:scale-95 transition">
+            إرسال الطلب
+        </button>
+    </div>
+
+    <script>
+        let cart = []; 
+        let total = 0;
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            if (drawer.style.display === 'none' || drawer.style.display === '') {
+                drawer.style.display = 'flex'; 
+                renderCart();
+            } else {
+                drawer.style.display = 'none';
+            }
+        }
+
+        function calculateTotal() {
+            total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const mainTotal = document.getElementById('total-price');
+            if(mainTotal) mainTotal.innerText = total;
+            const innerTotal = document.getElementById('inner-total');
+            if(innerTotal) innerTotal.innerText = total;
+            const cartCount = document.getElementById('cartCount');
+            if(cartCount) {
+                cartCount.innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            }
+            renderCart();
+        }
+        
+        function renderCart() {
+            const listDiv = document.getElementById('cartItemsList');
+            listDiv.innerHTML = '';
+            if (cart.length === 0) {
+                listDiv.innerHTML = '<p class="text-center text-gray-400 py-4">السلة فارغة</p>';
+                return;
+            }
+            cart.forEach((item, index) => {
+                listDiv.innerHTML += `
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <div class="flex-1 text-sm font-bold text-gray-700">${item.name}</div>
+                        <div class="flex items-center gap-3 px-2">
+                            <button onclick="changeQty(${index}, -1)" class="w-7 h-7 bg-gray-100 rounded-full font-bold">-</button>
+                            <span class="font-bold">${item.qty}</span>
+                            <button onclick="changeQty(${index}, 1)" class="w-7 h-7 bg-gray-100 rounded-full font-bold">+</button>
+                        </div>
+                        <div class="w-16 text-left text-orange-600 font-bold">${item.price * item.qty}</div>
+                    </div>`;
+            });
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            calculateTotal();
+        }
+
+        function addToCart(name, price, productId) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ name: name, price: price, qty: 1, id: productId });
+            }
+            calculateTotal();
+            
+            // تأثير بصري على الزر
+            if(window.event && window.event.target) {
+                const btn = window.event.target.closest('button');
+                const originalText = btn.innerHTML;
+                btn.innerText = "تم ✅";
+                setTimeout(() => btn.innerHTML = originalText, 800);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+            location.reload(); 
+        }
+
+        async function sendOrder() {
+            if (cart.length === 0) return alert("السلة فارغة!");
+            
+            let customerName = prompt("الاسم الكريم:");
+            if(!customerName) return;
+
+            let customerPhone = prompt("رقم الجوال (05XXXXXXXX):");
+            if(!customerPhone || !/^05\d{8}$/.test(customerPhone)) {
+                alert("خطأ في رقم الجوال"); 
+                return;
+            }
+
+            let addressDesc = prompt("وصف العنوان (الحي - الشارع):");
+            if (addressDesc === null) return; 
+            if (addressDesc.trim() === "") {
+                addressDesc = "لم يتم إدخال وصف";
+            }
+
+            let size = prompt("المقاس المطلوب (S/M/L/XL) أو اضغط إلغاء:");
+            if (size === null) size = "غير محدد";
+
+            let orderNote = prompt("ملاحظات إضافية؟") || "لا يوجد";
+
+            const btn = document.getElementById('send-btn');
+            btn.disabled = true;
+            btn.innerText = "جاري إرسال طلبك...";
+
+            let googleMapsLink = "لم يتم مشاركة الموقع";
+            if (confirm("هل تسمح بمشاركة موقعك (GPS)؟")) {
+                try {
+                    const pos = await new Promise((res, rej) => {
+                        navigator.geolocation.getCurrentPosition(res, rej, { timeout: 8000 });
+                    });
+                    googleMapsLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                } catch (err) { 
+                    alert("سيتم الإرسال بدون GPS"); 
+                }
+            }
+
+            try {
+                const scriptURL = "https://script.google.com/macros/s/AKfycbxTvyMfQTbR7hVTVyzxMePgnTLaXJG4yTcIZiEirAFSfOjv3F_Ry5qGQkMks0q-ty0/exec";
+                
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        "الاسم": customerName,
+                        "الجوال": customerPhone,
+                        "الوصف": addressDesc,
+                        "المقاس": size,
+                        "الملاحظة": orderNote,
+                        "الطلب": cart.map(item => `${item.name} × ${item.qty}`).join("\n"),
+                        "المجموع": total + " ريال",
+                        "الموقع": googleMapsLink,
+                        "الوقت": new Date().toLocaleString('ar-SA')
+                    })
+                });
+
+                document.getElementById('modalMsg').innerText = "تم استلام طلبك يا " + customerName + "\nسيتم التواصل معك قريباً!";
+                document.getElementById('successModal').style.display = 'block';
+
+            } catch (err) {
+                alert("حدث خطأ في الاتصال، حاول مرة أخرى");
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "إرسال الطلب";
+            }
+        }
+    </script>
+</body>
+</html>
